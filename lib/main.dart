@@ -1,3 +1,4 @@
+import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:nima/nima_actor.dart';
@@ -28,6 +29,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _wallHealth = 50;
+  int _imageIndex = 0;
+
+  bool _showLostScreen = false;
+
+  Stopwatch _stopwatch;
 
   AnimationController _controllerPerson;
   AnimationController _controllerHealthBar;
@@ -64,73 +70,95 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
     _controllerPerson = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 10),
+      duration: Duration(seconds: 4),
     )..forward();
     _controllerBusiness = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 10),
+      duration: Duration(seconds: 15),
     )..forward();
     _controllerHulk = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 15),
+      duration: Duration(seconds: 25),
     )..forward();
 
     _controllerHealthBar = new AnimationController(
         vsync: this, duration: Duration(milliseconds: 500));
 
+    // Check when close to wall to play explosion
+    _controllerPerson.addListener(() {
+      if (_personWalkToWallAnimation.value > 155) {
+        _flareControllerPersonExplosion.play("estrellas");
+      }
+    });
+    _controllerHulk.addListener(() {
+      if (_hulkWalkToWallAnimation.value < 120) {
+        _flareControllerHulkExplosion.play("estrellas");
+      }
+    });
+    _controllerBusiness.addListener(() {
+      if (_businessmanWalktoWallAnimation.value > 130) {
+        _flareControllerBusinessExplosion.play("estrellas");
+      }
+    });
     _controllerPerson.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        print("Person hit the wall");
+        setState(() {
+          _imageIndex = 0;
+        });
         _controllerPerson.reset();
         _controllerPerson.forward();
         // Degrease wall health
-        _removeHealth();
+        _removeHealth(1);
         // Blink the health bar
         _blinkHealthBar();
-        print("Blink health bar");
-
-        print("Restarted animation");
       }
     });
 
     _controllerBusiness.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        print("Person hit the wall");
+        setState(() {
+          _imageIndex = 1;
+        });
+
         _controllerBusiness.reset();
         _controllerBusiness.forward();
         // Degrease wall health
-        _removeHealth();
+        _removeHealth(3);
         // Blink the health bar
         _blinkHealthBar();
-        print("Blink health bar");
-
-        print("Restarted animation");
       }
     });
 
     _controllerHulk.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        print("Person hit the wall");
+        setState(() {
+          _imageIndex = 2;
+        });
         _controllerHulk.reset();
         _controllerHulk.forward();
         // Degrease wall health
-        _removeHealth();
+        _removeHealth(5);
         // Blink the health bar
         _blinkHealthBar();
-        print("Blink health bar");
-
-        print("Restarted animation");
       }
     });
+
+    _stopwatch = Stopwatch()..start();
 
     super.initState();
   }
 
   // Remove health when player runs into wall, or in reality when the animation is at end
-  void _removeHealth() {
-    setState(() {
-      _wallHealth -= 1;
-    });
+  void _removeHealth(int value) {
+    if (_wallHealth >= 0) {
+      setState(() {
+        _wallHealth -= value;
+      });
+    } else {
+      setState(() {
+        _showLostScreen = true;
+      });
+    }
   }
 
   // Blinks health bar by running [FadeTransition]
@@ -145,6 +173,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _controllerHealthBar.dispose();
     _controllerBusiness.dispose();
     _controllerHulk.dispose();
+
     super.dispose();
   }
 
@@ -165,17 +194,26 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     // Init person's animation
     _personWalkToWallAnimation =
         Tween(begin: 0.0, end: 183.0).animate(_controllerPerson);
-    _businessmanWalktoWallAnimation =
-        Tween(begin: 0.0, end: 170.0).animate(_controllerBusiness);
     _hulkWalkToWallAnimation =
         Tween(begin: MediaQuery.of(context).size.width, end: 110)
             .animate(_controllerHulk);
+    _businessmanWalktoWallAnimation =
+        Tween(begin: 0.0, end: 160.0).animate(_controllerBusiness);
 
     super.didChangeDependencies();
   }
 
+  final FlareControls _flareControllerPersonExplosion = FlareControls();
+  final FlareControls _flareControllerHulkExplosion = FlareControls();
+  final FlareControls _flareControllerBusinessExplosion = FlareControls();
   @override
   Widget build(BuildContext context) {
+    String _time;
+
+    setState(() {
+      _time = _stopwatch.elapsed.inSeconds.toString();
+    });
+
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -203,6 +241,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: Colors.orange,
+        actions: <Widget>[
+          Center(
+            child: Text(
+              "Score: $_time",
+              style: TextStyle(fontSize: 30),
+            ),
+          )
+        ],
       ),
       body: AnimatedBuilder(
         animation: _controllerPerson,
@@ -211,6 +257,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             width: _width,
             height: _height,
             child: Stack(children: [
+//?---------------Background-------------------------------------------------------------------------------------------------
               Positioned(
                 bottom: 0,
                 child: Image.asset("assets/BG.png"),
@@ -244,7 +291,48 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 left: 20,
                 child: Image.asset("assets/SignArrow.png"),
               ),
+              Positioned(
+                bottom: 50,
+                right: 30,
+                width: 50,
+                height: 50,
+                child: Image.asset("assets/Grass_green.png"),
+              ),
+              Positioned(
+                bottom: 153,
+                right: 42,
+                width: 50,
+                height: 50,
+                child: Image.asset("assets/Grass_brown.png"),
+              ),
 
+              Positioned(
+                bottom: 120,
+                right: 100,
+                width: 50,
+                height: 50,
+                child: Image.asset("assets/Stone.png"),
+              ),
+
+//?--------------Health bar---------------------------------------------------------------------------------------------------------------------
+              Positioned(
+                bottom: 235,
+                left: _width / 4,
+                width: _width / 2,
+                height: 50,
+                child: Container(
+                  child: FadeTransition(
+                    opacity: _controllerHealthBar,
+                    child: FAProgressBar(
+                      maxValue: 50,
+                      currentValue: _wallHealth,
+                      displayText: "/50",
+                      backgroundColor: Colors.redAccent,
+                      progressColor: Colors.greenAccent,
+                    ),
+                  ),
+                ),
+              ),
 //?--------------Characters---------------------------------------------------------------------------------------------------------------------
 
               const Positioned(
@@ -305,43 +393,53 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-
-//?--------------Health bar---------------------------------------------------------------------------------------------------------------------
+//? ------------------Items to drag-----------------------------------------------------------------------------------
               Positioned(
-                bottom: 235,
-                left: _width / 4,
                 width: _width / 2,
                 height: 50,
+                right: 0,
+                top: 0,
                 child: Container(
-                  child: FadeTransition(
-                    opacity: _controllerHealthBar,
-                    child: FAProgressBar(
-                      maxValue: 50,
-                      currentValue: _wallHealth,
-                      displayText: "/50",
-                      backgroundColor: Colors.redAccent,
-                      progressColor: Colors.greenAccent,
-                    ),
+                  color: Colors.grey,
+                  child: Row(
+                    children: <Widget>[
+                      Draggable<String>(
+                        data: "block",
+                        child: Image.asset("assets/StoneBlock.png"),
+                        feedback: Image.asset("assets/StoneBlock.png"),
+                        childWhenDragging: Image.asset(
+                          "assets/StoneBlock.png",
+                          colorBlendMode: BlendMode.hardLight,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      Draggable<String>(
+                        data: "stone",
+                        child: Image.asset("assets/Stone.png"),
+                        feedback: Image.asset("assets/Stone.png"),
+                        childWhenDragging: Image.asset(
+                          "assets/Stone.png",
+                          colorBlendMode: BlendMode.hardLight,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                      Draggable<String>(
+                        data: "wood",
+                        child: Image.asset("assets/Sign.png"),
+                        feedback: Image.asset("assets/Sign.png"),
+                        childWhenDragging: Image.asset(
+                          "assets/Sign.png",
+                          colorBlendMode: BlendMode.hardLight,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
 
 //?--------------Start of wall---------------------------------------------------------------------------------------------------------------------
-              //! Explosion
-              Positioned(
-                bottom: 10,
-                width: 200,
-                height: 70,
-                left: 65,
-                child: Container(
-                  width: 150,
-                  height: 150,
-                  child: const FlareActor("assets/Explosion.flr",
-                      alignment: Alignment.bottomLeft,
-                      fit: BoxFit.contain,
-                      animation: "estrellas"),
-                ),
-              ),
+
               Positioned(
                 bottom: 10,
                 width: _width,
@@ -352,6 +450,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   colorBlendMode: BlendMode.softLight,
                 ),
               ),
+
               Positioned(
                 bottom: 80,
                 width: _width,
@@ -372,7 +471,130 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   colorBlendMode: BlendMode.softLight,
                 ),
               ),
+              //?  Shows image on the middle of the wall------------------------------------
+              Positioned(
+                bottom: 90,
+                width: 60,
+                height: 50,
+                left: 175,
+                child: Container(
+                  width: 40,
+                  height: 20,
+                  color: Colors.grey,
+                  child: Builder(builder: (context) {
+                    if (_imageIndex == 0) {
+                      return Image.asset(
+                        "assets/StoneBlock.png",
+                        color: Colors.green,
+                        colorBlendMode: BlendMode.softLight,
+                      );
+                    } else if (_imageIndex == 1) {
+                      return Image.asset(
+                        "assets/Stone.png",
+                        color: Colors.green,
+                        colorBlendMode: BlendMode.softLight,
+                      );
+                    } else {
+                      return Image.asset(
+                        "assets/Sign.png",
+                        color: Colors.green,
+                        colorBlendMode: BlendMode.softLight,
+                      );
+                    }
+                  }),
+                ),
+              ),
+              Positioned(
+                bottom: 10,
+                width: 120,
+                height: 220,
+                left: 140,
+                child: Container(
+                  // color: Colors.green,
+                  child: DragTarget<String>(
+                    builder: (context, _, __) {
+                      return Container();
+                    },
+                    onWillAccept: (String data) {
+                      if (_imageIndex == 0 && data == "block") {
+                        setState(() {
+                          _wallHealth += 2;
+                        });
+                        print("$data-----------$_imageIndex");
+                        return true;
+                      } else if (_imageIndex == 1 && data == "stone") {
+                        setState(() {
+                          _wallHealth += 3;
+                        });
+                        return true;
+                      } else if (_imageIndex == 2 && data == "wood") {
+                        setState(() {
+                          _wallHealth += 5;
+                        });
+                        return true;
+                      }
+                      print("returns false");
+                      return false;
+                    },
+                  ),
+                ),
+              ),
+
 //?--------------End of wall---------------------------------------------------------------------------------------------------------------------
+
+//?--------------Start of Explosions---------------------------------------------------------------------------------------------------------------------
+
+              Positioned(
+                bottom: 10,
+                width: 200,
+                height: 70,
+                left: 80,
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  child: FlareActor(
+                    "assets/Explosion.flr",
+                    alignment: Alignment.bottomLeft,
+                    fit: BoxFit.contain,
+                    animation: "estrellas",
+                    controller: _flareControllerPersonExplosion,
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 150,
+                width: 200,
+                height: 70,
+                left: 155,
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  child: FlareActor(
+                    "assets/Explosion.flr",
+                    alignment: Alignment.bottomLeft,
+                    fit: BoxFit.contain,
+                    animation: "estrellas",
+                    controller: _flareControllerHulkExplosion,
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 90,
+                width: 200,
+                height: 70,
+                left: 80,
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  child: FlareActor(
+                    "assets/Explosion.flr",
+                    alignment: Alignment.bottomLeft,
+                    fit: BoxFit.contain,
+                    animation: "estrellas",
+                    controller: _flareControllerBusinessExplosion,
+                  ),
+                ),
+              ),
 
 //?--------------Front of ground---------------------------------------------------------------------------------------------------------------------
               Positioned(
@@ -389,33 +611,34 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 child: Image.asset("assets/Grass_brown.png"),
               ),
               Positioned(
-                bottom: 50,
-                right: 30,
-                width: 50,
-                height: 50,
-                child: Image.asset("assets/Grass_green.png"),
-              ),
-              Positioned(
-                bottom: 153,
-                right: 42,
-                width: 50,
-                height: 50,
-                child: Image.asset("assets/Grass_brown.png"),
-              ),
-              Positioned(
                 bottom: 0,
                 right: 42,
                 width: 50,
                 height: 50,
                 child: Image.asset("assets/Skeleton.png"),
               ),
-              Positioned(
-                bottom: 120,
-                right: 100,
-                width: 50,
-                height: 50,
-                child: Image.asset("assets/Stone.png"),
-              ),
+              _showLostScreen
+                  ? Positioned.fill(
+                      child: Container(
+                      child: Center(
+                          child: FlatButton(
+                        color: Colors.green,
+                        child: Text(
+                          "Start!",
+                          style: TextStyle(
+                              fontSize: 40, fontWeight: FontWeight.bold),
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _wallHealth = 50;
+                            _stopwatch.reset();
+                            _showLostScreen = false;
+                          });
+                        },
+                      )),
+                      color: Colors.white70,
+                    ))
+                  : Container(),
             ]),
           );
         },
