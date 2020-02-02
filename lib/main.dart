@@ -70,15 +70,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
     _controllerPerson = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 4),
+      duration: Duration(seconds: 2),
     )..forward();
     _controllerBusiness = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 15),
+      duration: Duration(seconds: 4),
     )..forward();
     _controllerHulk = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 25),
+      duration: Duration(seconds: 7),
     )..forward();
 
     _controllerHealthBar = new AnimationController(
@@ -157,6 +157,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     } else {
       setState(() {
         _showLostScreen = true;
+        _stopwatch.stop();
       });
     }
   }
@@ -195,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     _personWalkToWallAnimation =
         Tween(begin: 0.0, end: 183.0).animate(_controllerPerson);
     _hulkWalkToWallAnimation =
-        Tween(begin: MediaQuery.of(context).size.width, end: 110)
+        Tween(begin: MediaQuery.of(context).size.width, end: 110.0)
             .animate(_controllerHulk);
     _businessmanWalktoWallAnimation =
         Tween(begin: 0.0, end: 160.0).animate(_controllerBusiness);
@@ -520,7 +521,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         setState(() {
                           _wallHealth += 2;
                         });
-                        print("$data-----------$_imageIndex");
+
                         return true;
                       } else if (_imageIndex == 1 && data == "stone") {
                         setState(() {
@@ -533,7 +534,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         });
                         return true;
                       }
-                      print("returns false");
+
                       return false;
                     },
                   ),
@@ -620,22 +621,32 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               _showLostScreen
                   ? Positioned.fill(
                       child: Container(
-                      child: Center(
-                          child: FlatButton(
-                        color: Colors.green,
-                        child: Text(
-                          "Start!",
-                          style: TextStyle(
-                              fontSize: 40, fontWeight: FontWeight.bold),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _wallHealth = 50;
-                            _stopwatch.reset();
-                            _showLostScreen = false;
-                          });
-                        },
-                      )),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            "Score:${_stopwatch.elapsed.inSeconds} \n",
+                            style: TextStyle(
+                                fontSize: 30, fontStyle: FontStyle.italic),
+                          ),
+                          FlatButton(
+                            color: Colors.green,
+                            child: Text(
+                              "Start!",
+                              style: TextStyle(
+                                  fontSize: 40, fontWeight: FontWeight.bold),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _wallHealth = 50;
+                                _stopwatch.reset();
+                                _stopwatch.start();
+                                _showLostScreen = false;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
                       color: Colors.white70,
                     ))
                   : Container(),
