@@ -56,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Image imageStoneBlock;
   @override
   void initState() {
+    // Turhaa? voisi olla suoraan precachessa
     imageBackground = Image.asset("assets/BG.png");
     imageBushTriple = Image.asset("assets/Bush_triple.png");
     imageCactusSplit = Image.asset("assets/Cactus_split.png");
