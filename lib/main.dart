@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      showPerformanceOverlay: true,
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData.dark(),
       title: 'Repair the wall!',
@@ -44,31 +45,39 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Animation _businessmanWalktoWallAnimation;
   Animation _hulkWalkToWallAnimation;
 
-  Image imageBackground;
-  Image imageBushTriple;
-  Image imageCactusSplit;
-  Image imageCactusTall;
-  Image imageSignArrow;
-  Image imageGrassBrown;
-  Image imageGrassGreen;
-  Image imageSkeleton;
-  Image imageStone;
-  Image imageStoneBlock;
+  final Image imageBackground = Image.asset("assets/BG.png");
+  final Image imageBushTriple = Image.asset("assets/Bush_triple.png");
+  final Image imageCactusSplit = Image.asset("assets/Cactus_split.png");
+  final Image imageCactusTall = Image.asset("assets/Cactus_tall.png");
+  final Image imageSignArrow = Image.asset("assets/SignArrow.png");
+  final Image imageSign = Image.asset("assets/Sign.png");
+  final Image imageGrassBrown = Image.asset("assets/Grass_brown.png");
+  final Image imageGrassGreen = Image.asset("assets/Grass_green.png");
+  final Image imageSkeleton = Image.asset("assets/Skeleton.png");
+  final Image imageStone = Image.asset("assets/Stone.png");
+  final Image imageStoneBlock = Image.asset("assets/StoneBlock.png");
+  final Image imageStoneWallBlock = Image.asset(
+    "assets/StoneBlock.png",
+    color: Colors.brown,
+    colorBlendMode: BlendMode.softLight,
+  );
+  final Image imageWallStoneBlock = Image.asset(
+    "assets/StoneBlock.png",
+    color: Colors.green,
+    colorBlendMode: BlendMode.softLight,
+  );
+  final Image imageWallStone = Image.asset(
+    "assets/Stone.png",
+    color: Colors.green,
+    colorBlendMode: BlendMode.softLight,
+  );
+  final Image imageWallSign = Image.asset(
+    "assets/Sign.png",
+    color: Colors.green,
+    colorBlendMode: BlendMode.softLight,
+  );
   @override
   void initState() {
-    // Turhaa? voisi olla suoraan precachessa
-    imageBackground = Image.asset("assets/BG.png");
-    imageBushTriple = Image.asset("assets/Bush_triple.png");
-    imageCactusSplit = Image.asset("assets/Cactus_split.png");
-    imageCactusTall = Image.asset("assets/Cactus_tall.png");
-    imageSignArrow = Image.asset("assets/SignArrow.png");
-    imageGrassBrown = Image.asset("assets/Grass_brown.png");
-    imageGrassGreen = Image.asset("assets/Grass_green.png");
-    imageCactusTall = Image.asset("assets/Cactus_tall.png");
-    imageSkeleton = Image.asset("assets/Skeleton.png");
-    imageStone = Image.asset("assets/Stone.png");
-    imageStoneBlock = Image.asset("assets/StoneBlock.png");
-
     _controllerPerson = AnimationController(
       vsync: this,
       duration: Duration(seconds: 2),
@@ -187,6 +196,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     precacheImage(imageCactusSplit.image, context);
     precacheImage(imageCactusTall.image, context);
     precacheImage(imageSignArrow.image, context);
+    precacheImage(imageSign.image, context);
     precacheImage(imageGrassBrown.image, context);
     precacheImage(imageGrassGreen.image, context);
     precacheImage(imageSkeleton.image, context);
@@ -259,64 +269,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             width: _width,
             height: _height,
             child: Stack(children: [
-//?---------------Background-------------------------------------------------------------------------------------------------
-              Positioned(
-                bottom: 0,
-                child: Image.asset("assets/BG.png"),
-              ),
+              //?---------------Background-------------------------------------------------------------------------------------------------
+              ..._buildBackground(),
 
-              Positioned(
-                bottom: 200,
-                width: 50,
-                height: 50,
-                child: Image.asset("assets/Bush_triple.png"),
-              ),
-
-              Positioned(
-                bottom: 200,
-                left: 300,
-                width: 80,
-                height: 80,
-                child: Image.asset("assets/Cactus_split.png"),
-              ),
-
-              Positioned(
-                bottom: 123,
-                left: 40,
-                width: 50,
-                height: 50,
-                child: Image.asset("assets/Cactus_tall.png"),
-              ),
-
-              Positioned(
-                bottom: 40,
-                left: 20,
-                child: Image.asset("assets/SignArrow.png"),
-              ),
-              Positioned(
-                bottom: 50,
-                right: 30,
-                width: 50,
-                height: 50,
-                child: Image.asset("assets/Grass_green.png"),
-              ),
-              Positioned(
-                bottom: 153,
-                right: 42,
-                width: 50,
-                height: 50,
-                child: Image.asset("assets/Grass_brown.png"),
-              ),
-
-              Positioned(
-                bottom: 120,
-                right: 100,
-                width: 50,
-                height: 50,
-                child: Image.asset("assets/Stone.png"),
-              ),
-
-//?--------------Health bar---------------------------------------------------------------------------------------------------------------------
+              //?--------------Health bar---------------------------------------------------------------------------------------------------------------------
               Positioned(
                 bottom: 235,
                 left: _width / 4,
@@ -335,7 +291,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-//?--------------Characters---------------------------------------------------------------------------------------------------------------------
+              //?--------------Characters---------------------------------------------------------------------------------------------------------------------
 
               const Positioned(
                 child: SizedBox(
@@ -395,7 +351,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-//? ------------------Items to drag-----------------------------------------------------------------------------------
+              //? ------------------Items to drag-----------------------------------------------------------------------------------
               Positioned(
                 width: _width / 2,
                 height: 50,
@@ -407,8 +363,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     children: <Widget>[
                       Draggable<String>(
                         data: "block",
-                        child: Image.asset("assets/StoneBlock.png"),
-                        feedback: Image.asset("assets/StoneBlock.png"),
+                        child: imageStoneBlock,
+                        feedback: imageStoneBlock,
                         childWhenDragging: Image.asset(
                           "assets/StoneBlock.png",
                           colorBlendMode: BlendMode.hardLight,
@@ -417,8 +373,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       ),
                       Draggable<String>(
                         data: "stone",
-                        child: Image.asset("assets/Stone.png"),
-                        feedback: Image.asset("assets/Stone.png"),
+                        child: imageStone,
+                        feedback: imageStone,
                         childWhenDragging: Image.asset(
                           "assets/Stone.png",
                           colorBlendMode: BlendMode.hardLight,
@@ -427,8 +383,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       ),
                       Draggable<String>(
                         data: "wood",
-                        child: Image.asset("assets/Sign.png"),
-                        feedback: Image.asset("assets/Sign.png"),
+                        child: imageSign,
+                        feedback: imageSign,
                         childWhenDragging: Image.asset(
                           "assets/Sign.png",
                           colorBlendMode: BlendMode.hardLight,
@@ -440,39 +396,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 ),
               ),
 
-//?--------------Start of wall---------------------------------------------------------------------------------------------------------------------
+              //?--------------Start of wall---------------------------------------------------------------------------------------------------------------------
 
-              Positioned(
-                bottom: 10,
-                width: _width,
-                height: 70,
-                child: Image.asset(
-                  "assets/StoneBlock.png",
-                  color: Colors.brown,
-                  colorBlendMode: BlendMode.softLight,
-                ),
-              ),
+              ..._buildWall(_width),
 
-              Positioned(
-                bottom: 80,
-                width: _width,
-                height: 70,
-                child: Image.asset(
-                  "assets/StoneBlock.png",
-                  color: Colors.brown,
-                  colorBlendMode: BlendMode.softLight,
-                ),
-              ),
-              Positioned(
-                bottom: 150,
-                width: _width,
-                height: 70,
-                child: Image.asset(
-                  "assets/StoneBlock.png",
-                  color: Colors.brown,
-                  colorBlendMode: BlendMode.softLight,
-                ),
-              ),
               //?  Shows image on the middle of the wall------------------------------------
               Positioned(
                 bottom: 90,
@@ -485,23 +412,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   color: Colors.grey,
                   child: Builder(builder: (context) {
                     if (_imageIndex == 0) {
-                      return Image.asset(
-                        "assets/StoneBlock.png",
-                        color: Colors.green,
-                        colorBlendMode: BlendMode.softLight,
-                      );
+                      return imageWallStoneBlock;
                     } else if (_imageIndex == 1) {
-                      return Image.asset(
-                        "assets/Stone.png",
-                        color: Colors.green,
-                        colorBlendMode: BlendMode.softLight,
-                      );
+                      return imageWallStone;
                     } else {
-                      return Image.asset(
-                        "assets/Sign.png",
-                        color: Colors.green,
-                        colorBlendMode: BlendMode.softLight,
-                      );
+                      return imageWallSign;
                     }
                   }),
                 ),
@@ -542,9 +457,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 ),
               ),
 
-//?--------------End of wall---------------------------------------------------------------------------------------------------------------------
+              //?--------------End of wall---------------------------------------------------------------------------------------------------------------------
 
-//?--------------Start of Explosions---------------------------------------------------------------------------------------------------------------------
+              //?--------------Start of Explosions---------------------------------------------------------------------------------------------------------------------
 
               Positioned(
                 bottom: 10,
@@ -598,27 +513,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 ),
               ),
 
-//?--------------Front of ground---------------------------------------------------------------------------------------------------------------------
-              Positioned(
-                bottom: 0,
-                width: 50,
-                height: 50,
-                child: Image.asset("assets/Grass_brown.png"),
-              ),
-              Positioned(
-                bottom: -5,
-                left: (_width / 2) - 50,
-                width: 50,
-                height: 50,
-                child: Image.asset("assets/Grass_brown.png"),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 42,
-                width: 50,
-                height: 50,
-                child: Image.asset("assets/Skeleton.png"),
-              ),
+              //?--------------Front of ground---------------------------------------------------------------------------------------------------------------------
+              ..._buildForeGround(_width),
               _showLostScreen
                   ? Positioned.fill(
                       child: Container(
@@ -655,11 +551,109 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           );
         },
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: Icon(Icons.star),
-      // ),
     );
+  }
+
+  List<Widget> _buildBackground() {
+    return [
+      Positioned(
+        bottom: 0,
+        child: imageBackground,
+      ),
+      Positioned(
+        bottom: 200,
+        width: 50,
+        height: 50,
+        child: imageBushTriple,
+      ),
+      Positioned(
+        bottom: 200,
+        left: 300,
+        width: 80,
+        height: 80,
+        child: imageCactusSplit,
+      ),
+      Positioned(
+        bottom: 123,
+        left: 40,
+        width: 50,
+        height: 50,
+        child: imageCactusTall,
+      ),
+      Positioned(
+        bottom: 40,
+        left: 20,
+        child: imageSignArrow,
+      ),
+      Positioned(
+        bottom: 50,
+        right: 30,
+        width: 50,
+        height: 50,
+        child: imageGrassGreen,
+      ),
+      Positioned(
+        bottom: 153,
+        right: 42,
+        width: 50,
+        height: 50,
+        child: imageGrassBrown,
+      ),
+      Positioned(
+        bottom: 120,
+        right: 100,
+        width: 50,
+        height: 50,
+        child: imageStone,
+      ),
+    ];
+  }
+
+  List<Widget> _buildForeGround(double width) {
+    return [
+      Positioned(
+        bottom: 0,
+        width: 50,
+        height: 50,
+        child: imageGrassBrown,
+      ),
+      Positioned(
+        bottom: -5,
+        left: (width / 2) - 50,
+        width: 50,
+        height: 50,
+        child: imageGrassBrown,
+      ),
+      Positioned(
+        bottom: 0,
+        right: 42,
+        width: 50,
+        height: 50,
+        child: imageSkeleton,
+      )
+    ];
+  }
+
+  List<Widget> _buildWall(double width) {
+    return [
+      Positioned(
+        bottom: 10,
+        width: width,
+        height: 70,
+        child: imageStoneWallBlock,
+      ),
+      Positioned(
+        bottom: 80,
+        width: width,
+        height: 70,
+        child: imageStoneWallBlock,
+      ),
+      Positioned(
+        bottom: 150,
+        width: width,
+        height: 70,
+        child: imageStoneWallBlock,
+      ),
+    ];
   }
 }
