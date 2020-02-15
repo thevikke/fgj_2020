@@ -391,7 +391,7 @@ class _RepairWallGameState extends State<RepairWallGame>
                 child: Container(
                   child: Center(
                     child: IconButton(
-                      icon: Icon(Icons.close),
+                      icon: Icon(Icons.pause),
                       onPressed: () {
                         Navigator.of(context).push(
                           RevealRoute(
