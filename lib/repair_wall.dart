@@ -1,8 +1,11 @@
+import 'package:fgj_2020/pause_screen.dart';
 import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:nima/nima_actor.dart';
 import 'package:flare_flutter/flare_actor.dart';
+
+import 'reveal_animation.dart';
 
 class RepairWallGame extends StatefulWidget {
   @override
@@ -310,7 +313,6 @@ class _RepairWallGameState extends State<RepairWallGame>
                   transform: Matrix4.translationValues(
                       _hulkWalkToWallAnimation.value, 0.0, 0.0),
                   child: Container(
-                    color: Colors.green,
                     width: 200,
                     height: 200,
                     child: const NimaActor("assets/Hulk.nima",
@@ -377,6 +379,30 @@ class _RepairWallGameState extends State<RepairWallGame>
                         ),
                       ),
                     ],
+                  ),
+                ),
+              ),
+              //?---------------Pause/Leave button----------------------------------------------------------------------------------------
+              Positioned(
+                top: 50,
+                right: 0,
+                width: 100,
+                height: 100,
+                child: Container(
+                  child: Center(
+                    child: IconButton(
+                      icon: Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          RevealRoute(
+                            builder: (context) => PauseScreen(),
+                            transitionColor: Colors.orangeAccent,
+                          ),
+                        );
+                      },
+                      iconSize: 100,
+                      color: Colors.redAccent,
+                    ),
                   ),
                 ),
               ),

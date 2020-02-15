@@ -9,7 +9,7 @@ class RevealRoute<T> extends MaterialPageRoute<T> {
     WidgetBuilder builder,
     RouteSettings settings,
     this.transitionColor = Colors.green,
-    this.transitionDuration = const Duration(milliseconds: 500),
+    this.transitionDuration = const Duration(milliseconds: 250),
   }) : super(builder: builder, settings: settings);
 
   Color transitionColor;

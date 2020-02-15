@@ -19,7 +19,7 @@ class BasicButton extends StatelessWidget {
         text,
         style: TextStyle(
           color: textColor,
-          fontSize: 28,
+          fontSize: 22,
           fontFamily: "Frijole",
         ),
       ),

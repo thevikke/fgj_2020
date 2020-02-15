@@ -64,7 +64,7 @@ class StartScreen extends StatelessWidget {
         children: <Widget>[
           SizedBox(
             width: size.width / 2,
-            height: size.height / 15,
+            height: 50,
             child: BasicButton(
               () {
                 Navigator.push(
@@ -73,7 +73,7 @@ class StartScreen extends StatelessWidget {
                         builder: (context) => RepairWallGame(),
                         transitionColor: Colors.orangeAccent));
               },
-              text: "Start",
+              text: "START",
             ),
           ),
           SizedBox(
@@ -81,10 +81,10 @@ class StartScreen extends StatelessWidget {
           ),
           SizedBox(
             width: size.width / 2,
-            height: size.height / 15,
+            height: 50,
             child: BasicButton(
               () {},
-              text: "Hiscore",
+              text: "HISCORE",
             ),
           )
         ],
