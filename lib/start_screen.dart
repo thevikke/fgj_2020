@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:fgj_2020/basic_button.dart';
+import 'package:fgj_2020/repair_wall.dart';
+import 'package:fgj_2020/reveal_animation.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_circular_text/circular_text.dart';
@@ -47,22 +51,28 @@ class StartScreen extends StatelessWidget {
               ..._buildWall(_size.width),
               ..._buildCharacters(_size.width)
             ]),
-            ..._buildButtons(_size),
+            ..._buildButtons(_size, context),
           ],
         ),
       ),
     );
   }
 
-  List<Widget> _buildButtons(Size size) {
+  List<Widget> _buildButtons(Size size, BuildContext context) {
     return [
       Column(
         children: <Widget>[
           SizedBox(
             width: size.width / 2,
-            height: 50,
+            height: size.height / 15,
             child: BasicButton(
-              () {},
+              () {
+                Navigator.push(
+                    context,
+                    RevealRoute(
+                        builder: (context) => RepairWallGame(),
+                        transitionColor: Colors.orangeAccent));
+              },
               text: "Start",
             ),
           ),
@@ -71,7 +81,7 @@ class StartScreen extends StatelessWidget {
           ),
           SizedBox(
             width: size.width / 2,
-            height: 50,
+            height: size.height / 15,
             child: BasicButton(
               () {},
               text: "Hiscore",

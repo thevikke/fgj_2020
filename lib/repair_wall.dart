@@ -76,22 +76,6 @@ class _RepairWallGameState extends State<RepairWallGame>
     _controllerHealthBar = new AnimationController(
         vsync: this, duration: Duration(milliseconds: 500));
 
-    // Check when close to wall to play explosion
-    _controllerPerson.addListener(() {
-      if (_personWalkToWallAnimation.value > 155) {
-        _flareControllerPersonExplosion.play("estrellas");
-      }
-    });
-    _controllerHulk.addListener(() {
-      if (_hulkWalkToWallAnimation.value < 120) {
-        _flareControllerHulkExplosion.play("estrellas");
-      }
-    });
-    _controllerBusiness.addListener(() {
-      if (_businessmanWalktoWallAnimation.value > 130) {
-        _flareControllerBusinessExplosion.play("estrellas");
-      }
-    });
     _controllerPerson.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         setState(() {
@@ -172,6 +156,8 @@ class _RepairWallGameState extends State<RepairWallGame>
 
   @override
   void didChangeDependencies() {
+    var size = MediaQuery.of(context).size;
+
     // Init images
     precacheImage(imageBackground.image, context);
     precacheImage(imageBushTriple.image, context);
@@ -187,12 +173,28 @@ class _RepairWallGameState extends State<RepairWallGame>
 
     // Init person's animation
     _personWalkToWallAnimation =
-        Tween(begin: 0.0, end: 183.0).animate(_controllerPerson);
+        Tween(begin: 0.0, end: size.width / 2).animate(_controllerPerson);
     _hulkWalkToWallAnimation =
-        Tween(begin: MediaQuery.of(context).size.width, end: 110.0)
-            .animate(_controllerHulk);
+        Tween(begin: size.width, end: size.width / 12).animate(_controllerHulk);
     _businessmanWalktoWallAnimation =
-        Tween(begin: 0.0, end: 160.0).animate(_controllerBusiness);
+        Tween(begin: 0.0, end: size.width / 2).animate(_controllerBusiness);
+
+    // Check when close to wall to play explosion
+    _controllerPerson.addListener(() {
+      if (_personWalkToWallAnimation.value > (size.width / 4)) {
+        _flareControllerPersonExplosion.play("estrellas");
+      }
+    });
+    _controllerHulk.addListener(() {
+      if (_hulkWalkToWallAnimation.value < (size.width / 8)) {
+        _flareControllerHulkExplosion.play("estrellas");
+      }
+    });
+    _controllerBusiness.addListener(() {
+      if (_businessmanWalktoWallAnimation.value > (size.width / 4)) {
+        _flareControllerBusinessExplosion.play("estrellas");
+      }
+    });
 
     super.didChangeDependencies();
   }
@@ -232,18 +234,18 @@ class _RepairWallGameState extends State<RepairWallGame>
           ],
         ),
       ),
-      appBar: AppBar(
-        title: Text("Repair wall"),
-        backgroundColor: Colors.orange,
-        actions: <Widget>[
-          Center(
-            child: Text(
-              "Score: $_time",
-              style: TextStyle(fontSize: 30),
-            ),
-          )
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: Text("Repair wall"),
+      //   backgroundColor: Colors.orange,
+      //   actions: <Widget>[
+      //     Center(
+      //       child: Text(
+      //         "Score: $_time",
+      //         style: TextStyle(fontSize: 30),
+      //       ),
+      //     )
+      //   ],
+      // ),
       body: AnimatedBuilder(
         animation: _controllerPerson,
         builder: (context, widget) {
@@ -308,8 +310,9 @@ class _RepairWallGameState extends State<RepairWallGame>
                   transform: Matrix4.translationValues(
                       _hulkWalkToWallAnimation.value, 0.0, 0.0),
                   child: Container(
-                    width: 300,
-                    height: 300,
+                    color: Colors.green,
+                    width: 200,
+                    height: 200,
                     child: const NimaActor("assets/Hulk.nima",
                         alignment: Alignment.center,
                         fit: BoxFit.contain,
