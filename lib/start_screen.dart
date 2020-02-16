@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:fgj_2020/basic_button.dart';
-import 'package:fgj_2020/help_screen.dart';
+import 'package:fgj_2020/tutorial_screen.dart';
 import 'package:fgj_2020/repair_wall.dart';
 import 'package:fgj_2020/reveal_animation.dart';
 import 'package:flare_flutter/flare_actor.dart';

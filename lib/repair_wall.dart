@@ -287,7 +287,7 @@ class _RepairWallGameState extends State<RepairWallGame>
                   child: const FlareActor("assets/Sun_is_Born.flr",
                       alignment: Alignment.bottomRight,
                       fit: BoxFit.cover,
-                      animation: "Sun_in"),
+                      animation: "Sun_idle"),
                 ),
               ),
               Positioned(
