@@ -39,7 +39,10 @@ class _TutorialScreenState extends State<TutorialScreen> {
                   width: _size.width / 2.2,
                   height: 50,
                   child: BasicButton(
-                    () {},
+                    () {
+                      //TODO: Implement skipping this screen
+                      // Navigator.of(context).pushReplacement(newRoute)
+                    },
                     textColor: Colors.blue,
                     color: Colors.white70,
                     text: "SKIP",
@@ -49,7 +52,9 @@ class _TutorialScreenState extends State<TutorialScreen> {
                   width: _size.width / 2.2,
                   height: 50,
                   child: BasicButton(
-                    () {},
+                    () {
+                      //TODO: Implement next action in the animations
+                    },
                     textColor: Colors.white,
                     color: Colors.blue,
                     text: "NEXT -->",
