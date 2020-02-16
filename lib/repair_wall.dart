@@ -65,15 +65,15 @@ class _RepairWallGameState extends State<RepairWallGame>
   void initState() {
     _controllerPerson = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 2),
+      duration: const Duration(milliseconds: 2500),
     )..forward();
     _controllerBusiness = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 4),
+      duration: const Duration(seconds: 4),
     )..forward();
     _controllerHulk = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 7),
+      duration: const Duration(seconds: 9),
     )..forward();
 
     _controllerHealthBar = new AnimationController(
@@ -340,13 +340,14 @@ class _RepairWallGameState extends State<RepairWallGame>
               ),
               //? ------------------Items to drag-----------------------------------------------------------------------------------
               Positioned(
-                width: _width / 2,
-                height: 50,
+                width: 70,
+                height: 210,
                 right: 0,
-                top: 0,
+                top: _height / 3,
                 child: Container(
                   color: Colors.grey,
-                  child: Row(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Draggable<String>(
                         data: "block",
@@ -384,25 +385,33 @@ class _RepairWallGameState extends State<RepairWallGame>
               ),
               //?---------------Pause/Leave button----------------------------------------------------------------------------------------
               Positioned(
-                top: 50,
+                top: 0,
                 right: 0,
                 width: 100,
                 height: 100,
                 child: Container(
-                  child: Center(
-                    child: IconButton(
-                      icon: Icon(Icons.pause),
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          RevealRoute(
-                            builder: (context) => PauseScreen(),
-                            transitionColor: Colors.orangeAccent,
+                  color: Colors.white70,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                        splashColor: Colors.orangeAccent,
+                        onTap: () {
+                          Navigator.of(context).push(
+                            RevealRoute(
+                                builder: (context) => PauseScreen(),
+                                transitionColor: Colors.orangeAccent),
+                          );
+                        },
+                        child: Center(
+                          child: Text(
+                            "II",
+                            style: TextStyle(
+                              fontFamily: "Frijole",
+                              fontSize: 60,
+                              color: Colors.orangeAccent,
+                            ),
                           ),
-                        );
-                      },
-                      iconSize: 100,
-                      color: Colors.redAccent,
-                    ),
+                        )),
                   ),
                 ),
               ),
