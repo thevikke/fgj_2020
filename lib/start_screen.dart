@@ -124,10 +124,13 @@ class StartScreen extends StatelessWidget {
         left: width / 3,
         width: 150,
         height: 150,
-        child: NimaActor("assets/Hulk.nima",
-            alignment: Alignment.center,
-            fit: BoxFit.contain,
-            animation: "Walk"),
+        child: NimaActor(
+          "assets/Hulk.nima",
+          alignment: Alignment.center,
+          fit: BoxFit.contain,
+          animation: "Walk",
+          clip: false,
+        ),
       ),
     ];
   }

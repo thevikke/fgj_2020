@@ -1,3 +1,4 @@
+import 'package:fgj_2020/basic_button.dart';
 import 'package:fgj_2020/pause_screen.dart';
 import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
@@ -152,7 +153,7 @@ class _RepairWallGameState extends State<RepairWallGame>
   }
 
   @override
-  Future<void> didChangeDependencies() async {
+  void didChangeDependencies() {
     var size = MediaQuery.of(context).size;
 
     // Init images
@@ -192,8 +193,7 @@ class _RepairWallGameState extends State<RepairWallGame>
         _flareControllerBusinessExplosion.play("estrellas");
       }
     });
-    // Wait two seconds before starting the animations to let everything load.
-    await Future.delayed(const Duration(seconds: 1), () {});
+
     _startGame();
     super.didChangeDependencies();
   }
@@ -218,6 +218,19 @@ class _RepairWallGameState extends State<RepairWallGame>
     _controllerPerson.forward();
     _controllerHulk.forward();
     _controllerBusiness.forward();
+  }
+
+  void _restartGame() {
+    setState(() {
+      _wallHealth = 50;
+      _stopwatch.reset();
+      _stopwatch.start();
+      _controllerPerson.reset();
+      _controllerHulk.reset();
+      _controllerBusiness.reset();
+      _showLostScreen = false;
+    });
+    _startGame();
   }
 
   final FlareControls _flareControllerPersonExplosion = FlareControls();
@@ -334,10 +347,13 @@ class _RepairWallGameState extends State<RepairWallGame>
                   child: Container(
                     width: 200,
                     height: 200,
-                    child: NimaActor("assets/Hulk.nima",
-                        alignment: Alignment.center,
-                        fit: BoxFit.contain,
-                        animation: "Walk"),
+                    child: NimaActor(
+                      "assets/Hulk.nima",
+                      alignment: Alignment.center,
+                      fit: BoxFit.contain,
+                      animation: "Stomp",
+                      clip: false,
+                    ),
                   ),
                 ),
               ),
@@ -565,29 +581,60 @@ class _RepairWallGameState extends State<RepairWallGame>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            "Score:${_stopwatch.elapsed.inSeconds} \n",
+                            "YOU LOST!",
                             style: TextStyle(
-                                fontSize: 30, fontStyle: FontStyle.italic),
+                                fontSize: 30,
+                                fontFamily: "Frijole",
+                                color: Colors.white70),
                           ),
-                          FlatButton(
-                            color: Colors.green,
-                            child: Text(
-                              "Start!",
-                              style: TextStyle(
-                                  fontSize: 40, fontWeight: FontWeight.bold),
+                          Text(
+                            "SCORE:${_stopwatch.elapsed.inSeconds} \n",
+                            style: TextStyle(
+                                fontSize: 30,
+                                fontFamily: "Frijole",
+                                color: Colors.white70),
+                          ),
+                          Container(
+                            width: 200,
+                            height: 200,
+                            child: NimaActor(
+                              "assets/Hulk.nima",
+                              alignment: Alignment.center,
+                              fit: BoxFit.contain,
+                              animation: "Jump",
+                              clip: false,
                             ),
-                            onPressed: () {
-                              setState(() {
-                                _wallHealth = 50;
-                                _stopwatch.reset();
-                                _stopwatch.start();
-                                _showLostScreen = false;
-                              });
-                            },
+                          ),
+                          SizedBox(
+                            height: _height / 26,
+                          ),
+                          SizedBox(
+                            width: _width / 2,
+                            height: 50,
+                            child: BasicButton(
+                              () {
+                                Navigator.of(context)
+                                    .popUntil(ModalRoute.withName("/"));
+                              },
+                              text: "QUIT",
+                              color: Colors.white,
+                              textColor: Colors.blue,
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          SizedBox(
+                            width: _width / 2,
+                            height: 50,
+                            child: BasicButton(
+                              () {
+                                _restartGame();
+                              },
+                              text: "RESTART",
+                            ),
                           ),
                         ],
                       ),
-                      color: Colors.white70,
+                      color: Colors.orangeAccent,
                     ))
                   : Container(),
             ]),

@@ -45,12 +45,12 @@ class PauseScreen extends StatelessWidget {
                   Navigator.popUntil(context, ModalRoute.withName('/'));
                 },
                 textColor: Colors.blue,
-                color: Colors.white70,
+                color: Colors.white,
                 text: "QUIT",
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: 15,
             ),
             SizedBox(
               width: _size.width / 2,

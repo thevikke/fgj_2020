@@ -76,7 +76,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                             });
                           },
                           textColor: Colors.blue,
-                          color: Colors.white70,
+                          color: Colors.white,
                           text: "BACK",
                         )
                       : BasicButton(
@@ -88,7 +88,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                             );
                           },
                           textColor: Colors.blue,
-                          color: Colors.white70,
+                          color: Colors.white,
                           text: "SKIP",
                         ),
                 ),
