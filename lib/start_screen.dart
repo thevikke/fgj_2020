@@ -124,7 +124,7 @@ class StartScreen extends StatelessWidget {
         left: width / 3,
         width: 150,
         height: 150,
-        child: const NimaActor("assets/Hulk.nima",
+        child: NimaActor("assets/Hulk.nima",
             alignment: Alignment.center,
             fit: BoxFit.contain,
             animation: "Walk"),

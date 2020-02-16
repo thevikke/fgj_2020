@@ -2,6 +2,9 @@ import 'package:fgj_2020/basic_button.dart';
 import 'package:flutter/material.dart';
 
 class PauseScreen extends StatelessWidget {
+  final Function restartGame;
+  PauseScreen(this.restartGame);
+
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
@@ -53,8 +56,14 @@ class PauseScreen extends StatelessWidget {
               width: _size.width / 2,
               height: 50,
               child: BasicButton(
-                () {
+                () async {
                   Navigator.of(context).pop();
+                  // Wait 500 milliseconds before starting the game again so that the player has time to chill
+                  await Future.delayed(
+                    const Duration(seconds: 1),
+                    () {},
+                  );
+                  restartGame();
                 },
                 text: "RESUME",
               ),

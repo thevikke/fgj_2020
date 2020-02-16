@@ -21,8 +21,8 @@ class _RepairWallGameState extends State<RepairWallGame>
 
   Stopwatch _stopwatch;
 
-  AnimationController _controllerPerson;
   AnimationController _controllerHealthBar;
+  AnimationController _controllerPerson;
   AnimationController _controllerHulk;
   AnimationController _controllerBusiness;
 
@@ -66,15 +66,15 @@ class _RepairWallGameState extends State<RepairWallGame>
     _controllerPerson = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2500),
-    )..forward();
+    );
     _controllerBusiness = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
-    )..forward();
+    );
     _controllerHulk = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 9),
-    )..forward();
+    );
 
     _controllerHealthBar = new AnimationController(
         vsync: this, duration: Duration(milliseconds: 500));
@@ -122,7 +122,7 @@ class _RepairWallGameState extends State<RepairWallGame>
       }
     });
 
-    _stopwatch = Stopwatch()..start();
+    _stopwatch = Stopwatch();
 
     super.initState();
   }
@@ -141,12 +141,6 @@ class _RepairWallGameState extends State<RepairWallGame>
     }
   }
 
-  // Blinks health bar by running [FadeTransition]
-  void _blinkHealthBar() {
-    _controllerHealthBar.reset();
-    _controllerHealthBar.forward();
-  }
-
   @override
   void dispose() {
     _controllerPerson.dispose();
@@ -158,7 +152,7 @@ class _RepairWallGameState extends State<RepairWallGame>
   }
 
   @override
-  void didChangeDependencies() {
+  Future<void> didChangeDependencies() async {
     var size = MediaQuery.of(context).size;
 
     // Init images
@@ -182,7 +176,7 @@ class _RepairWallGameState extends State<RepairWallGame>
     _businessmanWalktoWallAnimation =
         Tween(begin: 0.0, end: size.width / 2).animate(_controllerBusiness);
 
-    // Check when close to wall to play explosion
+    // Calculate when close to wall to play explosion
     _controllerPerson.addListener(() {
       if (_personWalkToWallAnimation.value > (size.width / 4)) {
         _flareControllerPersonExplosion.play("estrellas");
@@ -198,8 +192,32 @@ class _RepairWallGameState extends State<RepairWallGame>
         _flareControllerBusinessExplosion.play("estrellas");
       }
     });
-
+    // Wait two seconds before starting the animations to let everything load.
+    await Future.delayed(const Duration(seconds: 1), () {});
+    _startGame();
     super.didChangeDependencies();
+  }
+
+  // Blinks health bar by running [FadeTransition]
+  void _blinkHealthBar() {
+    _controllerHealthBar.reset();
+    _controllerHealthBar.forward();
+  }
+
+  // Pause character animations and stopwatch
+  void _pauseGame() {
+    _stopwatch.stop();
+    _controllerPerson.stop();
+    _controllerHulk.stop();
+    _controllerBusiness.stop();
+  }
+
+  // Start character animations and stopwatch
+  void _startGame() {
+    _stopwatch.start();
+    _controllerPerson.forward();
+    _controllerHulk.forward();
+    _controllerBusiness.forward();
   }
 
   final FlareControls _flareControllerPersonExplosion = FlareControls();
@@ -290,6 +308,7 @@ class _RepairWallGameState extends State<RepairWallGame>
                       animation: "Sun_idle"),
                 ),
               ),
+              // If not true show nothing, this is for smooth start
               Positioned(
                 bottom: 10,
                 left: -75,
@@ -315,7 +334,7 @@ class _RepairWallGameState extends State<RepairWallGame>
                   child: Container(
                     width: 200,
                     height: 200,
-                    child: const NimaActor("assets/Hulk.nima",
+                    child: NimaActor("assets/Hulk.nima",
                         alignment: Alignment.center,
                         fit: BoxFit.contain,
                         animation: "Walk"),
@@ -338,6 +357,7 @@ class _RepairWallGameState extends State<RepairWallGame>
                   ),
                 ),
               ),
+
               //? ------------------Items to drag-----------------------------------------------------------------------------------
               Positioned(
                 width: 70,
@@ -396,9 +416,12 @@ class _RepairWallGameState extends State<RepairWallGame>
                     child: InkWell(
                         splashColor: Colors.orangeAccent,
                         onTap: () {
+                          // Pause the game
+                          _pauseGame();
+                          // Show [PauseScreen], pass the [_startGame] function as a parameter so we can start the game from [PauseScreen] view
                           Navigator.of(context).push(
                             RevealRoute(
-                                builder: (context) => PauseScreen(),
+                                builder: (context) => PauseScreen(_startGame),
                                 transitionColor: Colors.orangeAccent),
                           );
                         },
