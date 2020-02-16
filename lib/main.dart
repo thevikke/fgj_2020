@@ -12,7 +12,12 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       darkTheme: ThemeData.dark(),
       title: 'Repair wall',
-      home: StartScreen(),
+      // When using [initialRoute] don't use [home] property
+      initialRoute: '/',
+      routes: {
+        // When navigating to the "/" route, build the FirstScreen widget.
+        '/': (context) => StartScreen(),
+      },
     );
   }
 }

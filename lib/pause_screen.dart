@@ -24,9 +24,9 @@ class PauseScreen extends StatelessWidget {
               height: 50,
             ),
             Text(
-              "Paused",
+              "PAUSED",
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.white70,
                 fontSize: 28,
                 fontFamily: "Frijole",
               ),
@@ -39,13 +39,25 @@ class PauseScreen extends StatelessWidget {
               height: 50,
               child: BasicButton(
                 () {
-                  Navigator.of(context).pop();
+                  Navigator.popUntil(context, ModalRoute.withName('/'));
                 },
-                text: "RESUME",
+                textColor: Colors.blue,
+                color: Colors.white70,
+                text: "QUIT",
               ),
             ),
             const SizedBox(
               height: 20,
+            ),
+            SizedBox(
+              width: _size.width / 2,
+              height: 50,
+              child: BasicButton(
+                () {
+                  Navigator.of(context).pop();
+                },
+                text: "RESUME",
+              ),
             ),
           ],
         ),
