@@ -1,12 +1,14 @@
 import 'dart:math';
 
 import 'package:fgj_2020/basic_button.dart';
+import 'package:fgj_2020/help_screen.dart';
 import 'package:fgj_2020/repair_wall.dart';
 import 'package:fgj_2020/reveal_animation.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_circular_text/circular_text.dart';
 import 'package:nima/nima_actor.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StartScreen extends StatelessWidget {
   StartScreen({Key key}) : super(key: key);
@@ -66,12 +68,26 @@ class StartScreen extends StatelessWidget {
             width: size.width / 2,
             height: 50,
             child: BasicButton(
-              () {
-                Navigator.push(
+              () async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                // Check if tutorial has been shown
+                prefs.clear();
+                if (!(prefs.getBool("tutorialDone") ?? false)) {
+                  prefs.setBool("tutorialDone", true);
+                  Navigator.push(
+                    context,
+                    RevealRoute(
+                        builder: (context) => TutorialScreen(),
+                        transitionColor: Colors.orangeAccent),
+                  );
+                } else {
+                  Navigator.push(
                     context,
                     RevealRoute(
                         builder: (context) => RepairWallGame(),
-                        transitionColor: Colors.orangeAccent));
+                        transitionColor: Colors.orangeAccent),
+                  );
+                }
               },
               text: "START",
             ),
