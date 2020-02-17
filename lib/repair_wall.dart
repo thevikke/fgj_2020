@@ -17,6 +17,7 @@ class _RepairWallGameState extends State<RepairWallGame>
     with TickerProviderStateMixin {
   int _wallHealth = 50;
   int _imageIndex = 0;
+  Color _dragColor = Colors.transparent;
 
   bool _showLostScreen = false;
 
@@ -49,17 +50,14 @@ class _RepairWallGameState extends State<RepairWallGame>
   );
   final Image imageWallStoneBlock = Image.asset(
     "assets/StoneBlock.png",
-    color: Colors.green,
     colorBlendMode: BlendMode.softLight,
   );
   final Image imageWallStone = Image.asset(
     "assets/Stone.png",
-    color: Colors.green,
     colorBlendMode: BlendMode.softLight,
   );
   final Image imageWallSign = Image.asset(
     "assets/Sign.png",
-    color: Colors.green,
     colorBlendMode: BlendMode.softLight,
   );
   @override
@@ -309,6 +307,61 @@ class _RepairWallGameState extends State<RepairWallGame>
                   ),
                 ),
               ),
+
+              //?--------------Start of Explosions---------------------------------------------------------------------------------------------------------------------
+
+              Positioned(
+                bottom: 10,
+                width: 200,
+                height: 70,
+                left: 80,
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  child: FlareActor(
+                    "assets/Explosion.flr",
+                    alignment: Alignment.bottomLeft,
+                    fit: BoxFit.contain,
+                    animation: "estrellas",
+                    controller: _flareControllerPersonExplosion,
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 150,
+                width: 200,
+                height: 70,
+                left: 155,
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  child: FlareActor(
+                    "assets/Explosion.flr",
+                    alignment: Alignment.bottomLeft,
+                    fit: BoxFit.contain,
+                    animation: "estrellas",
+                    controller: _flareControllerHulkExplosion,
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 90,
+                width: 200,
+                height: 70,
+                left: 80,
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  child: FlareActor(
+                    "assets/Explosion.flr",
+                    alignment: Alignment.bottomLeft,
+                    fit: BoxFit.contain,
+                    animation: "estrellas",
+                    controller: _flareControllerBusinessExplosion,
+                  ),
+                ),
+              ),
+
               //?--------------Characters---------------------------------------------------------------------------------------------------------------------
 
               const Positioned(
@@ -461,14 +514,15 @@ class _RepairWallGameState extends State<RepairWallGame>
 
               //?  Shows image on the middle of the wall------------------------------------
               Positioned(
-                bottom: 90,
-                width: 60,
-                height: 50,
-                left: 175,
-                child: Container(
-                  width: 40,
+                bottom: 85,
+                width: 80,
+                height: 60,
+                left: _width / 2.47,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 100),
+                  width: 20,
                   height: 20,
-                  color: Colors.grey,
+                  color: _dragColor,
                   child: Builder(builder: (context) {
                     if (_imageIndex == 0) {
                       return imageWallStoneBlock;
@@ -481,36 +535,61 @@ class _RepairWallGameState extends State<RepairWallGame>
                 ),
               ),
               Positioned(
-                bottom: 10,
                 width: 120,
                 height: 220,
-                left: 140,
+                bottom: 10,
+                left: _width / 2.7,
                 child: Container(
-                  // color: Colors.green,
                   child: DragTarget<String>(
                     builder: (context, _, __) {
                       return Container();
                     },
                     onWillAccept: (String data) {
+                      print(data);
                       if (_imageIndex == 0 && data == "block") {
                         setState(() {
-                          _wallHealth += 2;
+                          _dragColor = Colors.green;
                         });
-
                         return true;
                       } else if (_imageIndex == 1 && data == "stone") {
                         setState(() {
-                          _wallHealth += 3;
+                          _dragColor = Colors.green;
                         });
                         return true;
                       } else if (_imageIndex == 2 && data == "wood") {
                         setState(() {
-                          _wallHealth += 5;
+                          _dragColor = Colors.green;
+                        });
+                        return true;
+                      } else {
+                        setState(() {
+                          _dragColor = Colors.red;
                         });
                         return true;
                       }
-
-                      return false;
+                    },
+                    onAccept: (String data) {
+                      print("onAccept: $data");
+                      if (_imageIndex == 0 && data == "block") {
+                        setState(() {
+                          _wallHealth += 2;
+                          _dragColor = Colors.transparent;
+                        });
+                      } else if (_imageIndex == 1 && data == "stone") {
+                        setState(() {
+                          _wallHealth += 3;
+                          _dragColor = Colors.transparent;
+                        });
+                      } else if (_imageIndex == 2 && data == "wood") {
+                        setState(() {
+                          _wallHealth += 5;
+                          _dragColor = Colors.transparent;
+                        });
+                      } else {
+                        setState(() {
+                          _dragColor = Colors.transparent;
+                        });
+                      }
                     },
                   ),
                 ),
@@ -518,62 +597,9 @@ class _RepairWallGameState extends State<RepairWallGame>
 
               //?--------------End of wall---------------------------------------------------------------------------------------------------------------------
 
-              //?--------------Start of Explosions---------------------------------------------------------------------------------------------------------------------
-
-              Positioned(
-                bottom: 10,
-                width: 200,
-                height: 70,
-                left: 80,
-                child: Container(
-                  width: 150,
-                  height: 150,
-                  child: FlareActor(
-                    "assets/Explosion.flr",
-                    alignment: Alignment.bottomLeft,
-                    fit: BoxFit.contain,
-                    animation: "estrellas",
-                    controller: _flareControllerPersonExplosion,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 150,
-                width: 200,
-                height: 70,
-                left: 155,
-                child: Container(
-                  width: 150,
-                  height: 150,
-                  child: FlareActor(
-                    "assets/Explosion.flr",
-                    alignment: Alignment.bottomLeft,
-                    fit: BoxFit.contain,
-                    animation: "estrellas",
-                    controller: _flareControllerHulkExplosion,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 90,
-                width: 200,
-                height: 70,
-                left: 80,
-                child: Container(
-                  width: 150,
-                  height: 150,
-                  child: FlareActor(
-                    "assets/Explosion.flr",
-                    alignment: Alignment.bottomLeft,
-                    fit: BoxFit.contain,
-                    animation: "estrellas",
-                    controller: _flareControllerBusinessExplosion,
-                  ),
-                ),
-              ),
-
-              //?--------------Front of ground---------------------------------------------------------------------------------------------------------------------
+              // //?--------------Front of ground---------------------------------------------------------------------------------------------------------------------
               ..._buildForeGround(_width),
+
               _showLostScreen
                   ? Positioned.fill(
                       child: Container(
