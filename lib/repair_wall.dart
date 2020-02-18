@@ -3,8 +3,10 @@ import 'package:fgj_2020/pause_screen.dart';
 import 'package:flare_flutter/flare_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
+import 'package:intl/intl.dart';
 import 'package:nima/nima_actor.dart';
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'reveal_animation.dart';
 
@@ -86,7 +88,7 @@ class _RepairWallGameState extends State<RepairWallGame>
         _controllerPerson.reset();
         _controllerPerson.forward();
         // Degrease wall health
-        _removeHealth(2);
+        _removeHealth(1);
         // Blink the health bar
         _blinkHealthBar();
       }
@@ -101,7 +103,7 @@ class _RepairWallGameState extends State<RepairWallGame>
         _controllerBusiness.reset();
         _controllerBusiness.forward();
         // Degrease wall health
-        _removeHealth(4);
+        _removeHealth(3);
         // Blink the health bar
         _blinkHealthBar();
       }
@@ -115,7 +117,7 @@ class _RepairWallGameState extends State<RepairWallGame>
         _controllerHulk.reset();
         _controllerHulk.forward();
         // Degrease wall health
-        _removeHealth(6);
+        _removeHealth(5);
         // Blink the health bar
         _blinkHealthBar();
       }
@@ -127,15 +129,27 @@ class _RepairWallGameState extends State<RepairWallGame>
   }
 
   // Remove health when player runs into wall, or in reality when the animation is at end
-  void _removeHealth(int value) {
+  Future<void> _removeHealth(int value) async {
     if (_wallHealth >= 0) {
       setState(() {
         _wallHealth -= value;
       });
     } else {
+      // Save the game into [SharedPreferences]
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      // Check if empty
+      var records = prefs.getStringList("records") ?? [];
+
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat('MM-dd-yyyy').format(now);
+
+      records.add(
+          "Date: $formattedDate Score: ${_stopwatch.elapsed.inSeconds.toString()}");
+      prefs.setStringList("records", records);
       setState(() {
+        // If lost the game show lost screen and pause game
         _showLostScreen = true;
-        _stopwatch.stop();
+        _pauseGame();
       });
     }
   }
@@ -494,7 +508,7 @@ class _RepairWallGameState extends State<RepairWallGame>
                           Navigator.of(context).push(
                             RevealRoute(
                                 builder: (context) => PauseScreen(_startGame),
-                                transitionColor: Colors.orangeAccent),
+                                transitionColor: Colors.blue),
                           );
                         },
                         child: Center(
@@ -548,7 +562,6 @@ class _RepairWallGameState extends State<RepairWallGame>
                       return Container();
                     },
                     onWillAccept: (String data) {
-                      print(data);
                       if (_imageIndex == 0 && data == "block") {
                         setState(() {
                           _dragColor = Colors.green;
@@ -572,7 +585,6 @@ class _RepairWallGameState extends State<RepairWallGame>
                       }
                     },
                     onAccept: (String data) {
-                      print("onAccept: $data");
                       if (_imageIndex == 0 && data == "block") {
                         setState(() {
                           _wallHealth += 1;
@@ -602,7 +614,7 @@ class _RepairWallGameState extends State<RepairWallGame>
 
               // //?--------------Front of ground---------------------------------------------------------------------------------------------------------------------
               ..._buildForeGround(_width),
-
+              //? Lost screen----------------------------------------------------------------------
               _showLostScreen
                   ? Positioned.fill(
                       child: Container(

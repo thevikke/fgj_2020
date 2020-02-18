@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:fgj_2020/basic_button.dart';
+import 'package:fgj_2020/hiscores_screen.dart';
 import 'package:fgj_2020/tutorial_screen.dart';
 import 'package:fgj_2020/repair_wall.dart';
 import 'package:fgj_2020/reveal_animation.dart';
@@ -70,22 +71,23 @@ class StartScreen extends StatelessWidget {
             child: BasicButton(
               () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
+                //TODO: remove when done
+                prefs.setBool("tutorialDone", null);
                 // Check if tutorial has been shown
-                prefs.clear();
                 if (!(prefs.getBool("tutorialDone") ?? false)) {
                   prefs.setBool("tutorialDone", true);
                   Navigator.push(
                     context,
                     RevealRoute(
                         builder: (context) => TutorialScreen(),
-                        transitionColor: Colors.orangeAccent),
+                        transitionColor: Colors.blue),
                   );
                 } else {
                   Navigator.push(
                     context,
                     RevealRoute(
                         builder: (context) => RepairWallGame(),
-                        transitionColor: Colors.orangeAccent),
+                        transitionColor: Colors.blue),
                   );
                 }
               },
@@ -99,8 +101,17 @@ class StartScreen extends StatelessWidget {
             width: size.width / 2,
             height: 50,
             child: BasicButton(
-              () {},
+              () {
+                Navigator.push(
+                  context,
+                  RevealRoute(
+                      builder: (context) => Hiscores(),
+                      transitionColor: Colors.blue),
+                );
+              },
               text: "HISCORE",
+              color: Colors.white,
+              textColor: Colors.blue,
             ),
           )
         ],

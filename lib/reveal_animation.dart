@@ -160,7 +160,7 @@ class RevealPainter extends CustomPainter {
 
     finalRadius = sqrt(
         pow(screenSize.width / 2, 2) + pow(screenSize.height - 32.0 - 48.0, 2));
-    print(finalRadius);
+
     radius = 24.0 + finalRadius * fraction;
 
     canvas.drawCircle(Offset(size.width / 2, size.height / 2), radius, paint);

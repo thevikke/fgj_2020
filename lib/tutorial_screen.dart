@@ -84,7 +84,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                             Navigator.of(context).pushReplacement(
                               RevealRoute(
                                   builder: (context) => RepairWallGame(),
-                                  transitionColor: Colors.orangeAccent),
+                                  transitionColor: Colors.blue),
                             );
                           },
                           textColor: Colors.blue,
@@ -101,7 +101,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                             Navigator.of(context).pushReplacement(
                               RevealRoute(
                                   builder: (context) => RepairWallGame(),
-                                  transitionColor: Colors.orangeAccent),
+                                  transitionColor: Colors.blue),
                             );
                           },
                           textColor: Colors.white,
