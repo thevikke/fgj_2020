@@ -86,7 +86,7 @@ class _RepairWallGameState extends State<RepairWallGame>
         _controllerPerson.reset();
         _controllerPerson.forward();
         // Degrease wall health
-        _removeHealth(1);
+        _removeHealth(2);
         // Blink the health bar
         _blinkHealthBar();
       }
@@ -101,7 +101,7 @@ class _RepairWallGameState extends State<RepairWallGame>
         _controllerBusiness.reset();
         _controllerBusiness.forward();
         // Degrease wall health
-        _removeHealth(3);
+        _removeHealth(4);
         // Blink the health bar
         _blinkHealthBar();
       }
@@ -115,7 +115,7 @@ class _RepairWallGameState extends State<RepairWallGame>
         _controllerHulk.reset();
         _controllerHulk.forward();
         // Degrease wall health
-        _removeHealth(5);
+        _removeHealth(6);
         // Blink the health bar
         _blinkHealthBar();
       }
@@ -236,12 +236,6 @@ class _RepairWallGameState extends State<RepairWallGame>
   final FlareControls _flareControllerBusinessExplosion = FlareControls();
   @override
   Widget build(BuildContext context) {
-    String _time;
-
-    setState(() {
-      _time = _stopwatch.elapsed.inSeconds.toString();
-    });
-
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -287,6 +281,15 @@ class _RepairWallGameState extends State<RepairWallGame>
             child: Stack(children: [
               //?---------------Background-------------------------------------------------------------------------------------------------
               ..._buildBackground(),
+
+              Positioned(
+                top: 50,
+                left: _width / 2.6,
+                child: Text(
+                  "${_stopwatch.elapsed.inSeconds.toString()}",
+                  style: TextStyle(fontFamily: "Frijole", fontSize: 70),
+                ),
+              ),
 
               //?--------------Health bar---------------------------------------------------------------------------------------------------------------------
               Positioned(
@@ -572,17 +575,17 @@ class _RepairWallGameState extends State<RepairWallGame>
                       print("onAccept: $data");
                       if (_imageIndex == 0 && data == "block") {
                         setState(() {
-                          _wallHealth += 2;
+                          _wallHealth += 1;
                           _dragColor = Colors.transparent;
                         });
                       } else if (_imageIndex == 1 && data == "stone") {
                         setState(() {
-                          _wallHealth += 3;
+                          _wallHealth += 2;
                           _dragColor = Colors.transparent;
                         });
                       } else if (_imageIndex == 2 && data == "wood") {
                         setState(() {
-                          _wallHealth += 5;
+                          _wallHealth += 3;
                           _dragColor = Colors.transparent;
                         });
                       } else {
