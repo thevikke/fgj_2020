@@ -124,7 +124,8 @@ class _RepairWallGameState extends State<RepairWallGame>
     });
 
     _stopwatch = Stopwatch();
-
+    print("didchange called!");
+    _startGame();
     super.initState();
   }
 
@@ -149,8 +150,8 @@ class _RepairWallGameState extends State<RepairWallGame>
       setState(() {
         // If lost the game show lost screen and pause game
         _showLostScreen = true;
-        _pauseGame();
       });
+      _pauseGame();
     }
   }
 
@@ -206,7 +207,6 @@ class _RepairWallGameState extends State<RepairWallGame>
       }
     });
 
-    _startGame();
     super.didChangeDependencies();
   }
 
@@ -219,6 +219,7 @@ class _RepairWallGameState extends State<RepairWallGame>
   // Pause character animations and stopwatch
   void _pauseGame() {
     _stopwatch.stop();
+
     _controllerPerson.stop();
     _controllerHulk.stop();
     _controllerBusiness.stop();
@@ -501,7 +502,7 @@ class _RepairWallGameState extends State<RepairWallGame>
                     color: Colors.transparent,
                     child: InkWell(
                         splashColor: Colors.orangeAccent,
-                        onTap: () {
+                        onTap: () async {
                           // Pause the game
                           _pauseGame();
                           // Show [PauseScreen], pass the [_startGame] function as a parameter so we can start the game from [PauseScreen] view
@@ -629,7 +630,7 @@ class _RepairWallGameState extends State<RepairWallGame>
                                 color: Colors.white70),
                           ),
                           Text(
-                            "SCORE:${_stopwatch.elapsed.inSeconds} \n",
+                            "SCORE:${_stopwatch.elapsed.inSeconds.toString()} \n",
                             style: TextStyle(
                                 fontSize: 30,
                                 fontFamily: "Frijole",

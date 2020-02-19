@@ -60,7 +60,7 @@ class PauseScreen extends StatelessWidget {
                   Navigator.of(context).pop();
                   // Wait 500 milliseconds before starting the game again so that the player has time to chill
                   await Future.delayed(
-                    const Duration(seconds: 1),
+                    const Duration(milliseconds: 500),
                     () {},
                   );
                   restartGame();
