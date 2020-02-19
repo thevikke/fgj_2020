@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:fgj_2020/basic_button.dart';
 import 'package:fgj_2020/pause_screen.dart';
 import 'package:flare_flutter/flare_controls.dart';
@@ -21,9 +24,13 @@ class _RepairWallGameState extends State<RepairWallGame>
   int _imageIndex = 0;
   Color _dragColor = Colors.transparent;
 
+  bool _muted = true;
+
   bool _showLostScreen = false;
 
   Stopwatch _stopwatch;
+
+  SharedPreferences _prefs;
 
   AnimationController _controllerHealthBar;
   AnimationController _controllerPerson;
@@ -33,6 +40,7 @@ class _RepairWallGameState extends State<RepairWallGame>
   Animation _personWalkToWallAnimation;
   Animation _businessmanWalktoWallAnimation;
   Animation _hulkWalkToWallAnimation;
+  final _assetsAudioPlayer = AssetsAudioPlayer();
 
   final Image imageBackground = Image.asset("assets/BG.png");
   final Image imageBushTriple = Image.asset("assets/Bush_triple.png");
@@ -123,9 +131,21 @@ class _RepairWallGameState extends State<RepairWallGame>
       }
     });
 
+    SharedPreferences.getInstance().then((SharedPreferences sp) {
+      _prefs = sp;
+      setState(() {
+        // If null then set as true so that music doesn't start
+        _muted = _prefs.getBool("muted") ?? true;
+      });
+      if (!_muted) {
+        _initMusic();
+      }
+    });
+
     _stopwatch = Stopwatch();
-    print("didchange called!");
+
     _startGame();
+
     super.initState();
   }
 
@@ -136,17 +156,15 @@ class _RepairWallGameState extends State<RepairWallGame>
         _wallHealth -= value;
       });
     } else {
-      // Save the game into [SharedPreferences]
-      SharedPreferences prefs = await SharedPreferences.getInstance();
       // Check if empty
-      var records = prefs.getStringList("records") ?? [];
+      var records = _prefs.getStringList("records") ?? [];
 
       DateTime now = DateTime.now();
       String formattedDate = DateFormat('MM-dd-yyyy').format(now);
 
       records.add(
           "Date: $formattedDate Score: ${_stopwatch.elapsed.inSeconds.toString()}");
-      prefs.setStringList("records", records);
+      _prefs.setStringList("records", records);
       setState(() {
         // If lost the game show lost screen and pause game
         _showLostScreen = true;
@@ -161,7 +179,8 @@ class _RepairWallGameState extends State<RepairWallGame>
     _controllerHealthBar.dispose();
     _controllerBusiness.dispose();
     _controllerHulk.dispose();
-
+    _assetsAudioPlayer.stop();
+    _assetsAudioPlayer.dispose();
     super.dispose();
   }
 
@@ -219,10 +238,12 @@ class _RepairWallGameState extends State<RepairWallGame>
   // Pause character animations and stopwatch
   void _pauseGame() {
     _stopwatch.stop();
-
     _controllerPerson.stop();
     _controllerHulk.stop();
     _controllerBusiness.stop();
+    if (!_muted) {
+      _assetsAudioPlayer.pause();
+    }
   }
 
   // Start character animations and stopwatch
@@ -231,19 +252,37 @@ class _RepairWallGameState extends State<RepairWallGame>
     _controllerPerson.forward();
     _controllerHulk.forward();
     _controllerBusiness.forward();
+    if (!_muted) {
+      _assetsAudioPlayer.play();
+    }
   }
 
   void _restartGame() {
     setState(() {
       _wallHealth = 50;
-      _stopwatch.reset();
-      _stopwatch.start();
-      _controllerPerson.reset();
-      _controllerHulk.reset();
-      _controllerBusiness.reset();
       _showLostScreen = false;
     });
-    _startGame();
+    _stopwatch.reset();
+    _stopwatch.start();
+    _controllerPerson.reset();
+    _controllerHulk.reset();
+    _controllerBusiness.reset();
+    _controllerPerson.forward();
+    _controllerHulk.forward();
+    _controllerBusiness.forward();
+    _restartMusic();
+  }
+
+  void _restartMusic() {
+    _assetsAudioPlayer.seek(const Duration(seconds: 1));
+    _assetsAudioPlayer.loop = true;
+    _assetsAudioPlayer.play();
+  }
+
+  void _initMusic() {
+    _assetsAudioPlayer.open(
+      "assets/audios/music.mp3",
+    );
   }
 
   final FlareControls _flareControllerPersonExplosion = FlareControls();
@@ -254,39 +293,6 @@ class _RepairWallGameState extends State<RepairWallGame>
     final _width = MediaQuery.of(context).size.width;
     final _height = MediaQuery.of(context).size.height;
     return Scaffold(
-      drawer: Drawer(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(Icons.help_outline),
-                SizedBox(
-                  width: 5,
-                ),
-                Expanded(
-                  child: Text(
-                      "License information: Animations (sun, green man, business man and person) from www.rive.app service. Licensed under CC BY 4.0 https://creativecommons.org/licenses/by/4.0/.\nOther images used from: https://opengameart.org/content/free-desert-platformer-tileset"),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-      // appBar: AppBar(
-      //   title: Text("Repair wall"),
-      //   backgroundColor: Colors.orange,
-      //   actions: <Widget>[
-      //     Center(
-      //       child: Text(
-      //         "Score: $_time",
-      //         style: TextStyle(fontSize: 30),
-      //       ),
-      //     )
-      //   ],
-      // ),
       body: AnimatedBuilder(
         animation: _controllerPerson,
         builder: (context, widget) {
@@ -526,6 +532,36 @@ class _RepairWallGameState extends State<RepairWallGame>
                 ),
               ),
 
+              //? -----------------Mute music button---------------------------------------
+              Positioned(
+                top: 100,
+                right: 0,
+                width: 100,
+                height: 100,
+                child: Container(
+                  child: IconButton(
+                    icon: Icon(_muted ? Icons.volume_off : Icons.volume_up),
+                    iconSize: 50,
+                    color: Colors.orangeAccent,
+                    onPressed: () {
+                      if (!_muted) {
+                        setState(() {
+                          _muted = true;
+                        });
+
+                        _assetsAudioPlayer.stop();
+                      } else {
+                        setState(() {
+                          _muted = false;
+                        });
+                        _initMusic();
+                        _restartMusic();
+                      }
+                      _prefs.setBool("muted", _muted);
+                    },
+                  ),
+                ),
+              ),
               //?--------------Start of wall---------------------------------------------------------------------------------------------------------------------
 
               ..._buildWall(_width),

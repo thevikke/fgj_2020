@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fgj_2020/basic_button.dart';
 import 'package:fgj_2020/hiscores_screen.dart';
+import 'package:fgj_2020/info_screen.dart';
 import 'package:fgj_2020/tutorial_screen.dart';
 import 'package:fgj_2020/repair_wall.dart';
 import 'package:fgj_2020/reveal_animation.dart';
@@ -22,10 +23,29 @@ class StartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
-    return Container(
-      color: Colors.orangeAccent,
-      child: Padding(
-        padding: EdgeInsets.only(top: _size.height / 10),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.orangeAccent,
+        elevation: 0,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.info_outline,
+            ),
+            iconSize: 40,
+            onPressed: () {
+              Navigator.of(context).push(
+                RevealRoute(
+                    builder: (context) => InfoScreen(),
+                    transitionColor: Colors.blue),
+              );
+            },
+          )
+        ],
+      ),
+      body: Container(
+        width: _size.width,
+        color: Colors.orangeAccent,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[

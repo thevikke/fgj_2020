@@ -24,6 +24,7 @@ dependencies:
   flutter_circular_text: ^0.3.0
   shared_preferences: ^0.5.3+5
   intl: ^0.16.1
+  assets_audio_player: ^1.2.3
 
   flutter_animation_progress_bar: ^1.0.0
   spritewidget: ^0.9.24
@@ -49,6 +50,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/audios/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
   # For details regarding adding assets from package dependencies, see

@@ -77,31 +77,30 @@ class _HiscoresState extends State<Hiscores> {
         iconTheme: IconThemeData(color: Colors.blue),
       ),
       body: Container(
-          width: _size.width,
-          color: Colors.orangeAccent,
-          padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
-          child: _loading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : ListView.separated(
-                  itemCount: _records.length,
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Divider(
-                      color: Colors.blue,
-                    );
-                  },
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      leading: Text("$index.",
-                          style:
-                              TextStyle(fontFamily: "Frijole", fontSize: 20)),
-                      title: Text(" ${_records[index]}",
-                          style:
-                              TextStyle(fontFamily: "Frijole", fontSize: 14)),
-                    );
-                  },
-                )),
+        width: _size.width,
+        color: Colors.orangeAccent,
+        padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
+        child: _loading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView.separated(
+                itemCount: _records.length,
+                separatorBuilder: (BuildContext context, int index) {
+                  return Divider(
+                    color: Colors.blue,
+                  );
+                },
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    leading: Text("$index.",
+                        style: TextStyle(fontFamily: "Frijole", fontSize: 20)),
+                    title: Text(" ${_records[index]}",
+                        style: TextStyle(fontFamily: "Frijole", fontSize: 14)),
+                  );
+                },
+              ),
+      ),
     );
   }
 }
