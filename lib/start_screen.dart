@@ -91,8 +91,7 @@ class StartScreen extends StatelessWidget {
             child: BasicButton(
               () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                //TODO: remove when done
-                prefs.setBool("tutorialDone", null);
+
                 // Check if tutorial has been shown
                 if (!(prefs.getBool("tutorialDone") ?? false)) {
                   prefs.setBool("tutorialDone", true);
