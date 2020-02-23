@@ -27,6 +27,19 @@ class StartScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.orangeAccent,
         elevation: 0,
+        leading: IconButton(
+          icon: Icon(
+            Icons.play_arrow,
+          ),
+          iconSize: 40,
+          onPressed: () {
+            Navigator.of(context).push(
+              RevealRoute(
+                  builder: (context) => TutorialScreen(),
+                  transitionColor: Colors.blue),
+            );
+          },
+        ),
         actions: <Widget>[
           IconButton(
             icon: Icon(
