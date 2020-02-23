@@ -12,3 +12,6 @@ Walking man https://rive.app/a/iamramesh/files/flare/walking/preview
 All animation assets are using CC BY 4.0 license https://creativecommons.org/licenses/by/4.0/
 
 Png images used for free from here: https://opengameart.org/content/free-desert-platformer-tileset
+
+Music Infiltrators by Nathaniel Wyvern, licensed under CC BY
+from: https://freemusicarchive.org/music/Nathaniel_Wyvern/2019_releases_collection/Nathaniel_Wyvern_-_Infiltrators
