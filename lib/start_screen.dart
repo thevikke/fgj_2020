@@ -29,7 +29,7 @@ class StartScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: Icon(
-            Icons.play_arrow,
+            Icons.chrome_reader_mode,
           ),
           iconSize: 40,
           onPressed: () {

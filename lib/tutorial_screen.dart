@@ -11,7 +11,7 @@ class TutorialScreen extends StatefulWidget {
 class _TutorialScreenState extends State<TutorialScreen> {
   int _tutorialIndex = 0;
   List<String> _tutorialStrings = [
-    "On the left there is draggable items",
+    "On the right there is draggable items",
     "The wall has a picture of the item that it needs",
     "Drag the item from the right to the wall",
     "When enemies hit the wall it loses health, gain health by repairing it!"
