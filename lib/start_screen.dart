@@ -12,6 +12,7 @@ import 'package:flutter_circular_text/circular_text.dart';
 import 'package:nima/nima_actor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// This is the start screen
 class StartScreen extends StatelessWidget {
   StartScreen({Key key}) : super(key: key);
 
